@@ -1,0 +1,33 @@
+{
+  "name": "help-desk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node --max_old_space_size=512 app.js",
+    "dev": "nodemon app.js",
+    "prod": "PORT=6500 NODE_ENV=production node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chandima",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "@hapi/joi-date": "^2.0.1",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "log4js": "^6.1.2",
+    "mysql2": "^2.1.0",
+    "sequelize": "^5.21.6"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "nodemon": "^2.0.2",
+    "prettier": "^2.0.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 140
+  }
+}

@@ -1,41 +1,42 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
+const { Sequelize } = require('sequelize');
+const db = require('../dbConfig');
 
-const Customer = sequelize.define('Customer', {
+const Customer = db.define('customer', {
 
   ID: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: Sequelize.STRING,
+    primaryKey: true,
   },
   NIC: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false
   },
   Name: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: Sequelize.STRING,
+    //allowNull: false
   },
   Email: {
-    type: DataTypes.STRING
+    type: Sequelize.STRING,
     // allowNull defaults to true
   },
   DOB: {
-    type: DataTypes.DATEONLY
+    type: Sequelize.DATEONLY
   },
   TelNo: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: Sequelize.STRING,
+    //allowNull: false
   },
   Address: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: Sequelize.STRING,
+    //allowNull: false
   },
   Gender: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: Sequelize.STRING,
+    //allowNull: false
   },
 }, {
-  // Other model options go here
+  tableName: 'customer',
+  timestamps: false
 });
 
-console.log(Customer === sequelize.models.Customer);
+module.exports = Customer;

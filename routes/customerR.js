@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const customerController = require('../controllers/customerController');
+const customerC = require('../controllers/customerC');
 
 const app = express();
 
-router.post('/', customerController);
+router.post('/customer', customerC.addCustomer)
+router.get('/quotation', customerC.getCustomer)
 
 module.exports = router;

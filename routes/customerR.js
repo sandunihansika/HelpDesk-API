@@ -4,7 +4,7 @@ const customerC = require('../controllers/customerC');
 
 const app = express();
 
-router.post('/customer', customerC.addCustomer)
-router.get('/quotation', customerC.getCustomer)
+router.post('/customer', customerC.addCustomer);
+router.get('/viewdetails', customerC.getCustomer);
 
 module.exports = router;

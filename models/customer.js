@@ -5,25 +5,24 @@ const Customer = db.define('customer', {
 
   ID: {
     type: Sequelize.STRING,
-    primaryKey: true,
+    primaryKey: true
   },
   NIC: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  Name: {
-    type: Sequelize.STRING,
-    //allowNull: false
+  FirstName: {
+    type: Sequelize.STRING
+  },
+  LastName: {
+    type: Sequelize.STRING
   },
   Email: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING
     // allowNull defaults to true
   },
-  DOB: {
-    type: Sequelize.DATEONLY
-  },
   TelNo: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING
     //allowNull: false
   },
   Address: {

@@ -12,12 +12,10 @@ const Fileupload = db.define('fileupload', {
   },
   name: {
     type: Sequelize.STRING
+  },
+  data: {
+    type: Sequelize.BLOB('long')
   }
-  // PDF: {
-  //   type: Sequelize.BLOB,
-  //   allowNull: true,
-  //   defaultValue: ' '
-  // }
 
 }, {
   tableName: 'fileupload',

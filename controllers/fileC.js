@@ -1,5 +1,5 @@
 const stream = require('stream');
-const Fileupload = require('../models/file');
+const Fileupload = require('../models/upload');
 const fs = require('fs');
 
 

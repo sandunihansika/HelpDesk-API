@@ -1,19 +1,24 @@
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     //cb(null, 'uploads');
-    const dir = './uploads/id';
-    fs.exists(dir, exist => {
-      if (!exist) {
-        return fs.mkdir(dir, error => cb(error, dir));
+    const { NIC } = req.body;
+    const { QuotationNo } = req.body;
+    const dir = `./uploads/${NIC}/quotations`;
+    fs.stat(dir, exist => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
       }
       return cb(null, dir);
     });
   },
   filename: (req, file, cb) => {
     console.log(file);
-    cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, file.originalname);
   }
 });
 const fileFilter = (req, file, cb) => {
@@ -24,4 +29,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-exports.module = multer;
+const upload = multer({ storage: storage, fileFilter: fileFilter });
+module.exports = upload;
+

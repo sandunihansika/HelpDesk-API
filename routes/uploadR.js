@@ -1,27 +1,32 @@
 const express = require('express');
 const fs = require('fs');
 const router = express.Router();
-const path = require('path');
+const multer = require('multer');
+//const upload = require('../config/multer');
 const uploadC = require('../controllers/uploadC');
 
-const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     //cb(null, 'uploads');
-    const { NIC } = req.body;
-    const { QuotationNo } = req.body;
-    const dir = `./uploads/${NIC}/quotations`;
+    const { CustomerID } = req.body;
+    const dir = `./uploads/${CustomerID}/quotations`;
     fs.stat(dir, exist => {
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+        fs.mkdirSync(dir, { recursive: true });
       }
+      // if (!exist) {
+      //   console.log("coming");
+      //   return fs.mkdir(dir, error => cb(error, dir))
+      // }
       return cb(null, dir);
     });
   },
   filename: (req, file, cb) => {
     console.log(file);
-    cb(null, file.originalname);
+    var d = new Date();
+    let fname = d.toISOString().replace(/:/g, '-');
+    cb(null, fname + ' ' + file.originalname);
   }
 });
 const fileFilter = (req, file, cb) => {

@@ -29,9 +29,6 @@ const Quotation = db.define('quotation', {
   },
   CreatedBy: {
     type: Sequelize.STRING
-  },
-  PDF: {
-    type: Sequelize.BLOB('long')
   }
 }, {
   tableName: 'quotation',

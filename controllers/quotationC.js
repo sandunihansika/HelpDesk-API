@@ -6,46 +6,50 @@ const Quotation = require('../models/quotation');
 exports.addQuotation = (req, res, next) => {
   try {
     db.transaction(async t => {
-      await Quotation.findAll({
-          attributes: ['QuotationNo'],
-          where: { QuotationNo: req.body.QuotationNo }
-        },
-        { transaction: t }).then(async quotation => {
-        if (quotation.length > 1) {
-          return res.status(200).json({
-            message: 'Quotation already exist'
-          });
-        } else {
-          const quotation = await Quotation.create({
-              //ID: req.body.ID,
-              CustomerID: req.body.CustomerID,
-              Description: req.body.Description,
-              QuotationNo: req.body.QuotationNo,
-              ExpiryDate: req.body.ExpiryDate,
-              CreatedBy: req.body.CreatedBy,
-              PDF: req.body.buffer
-            },
-            { transaction: t });
+      let preList = [];
+      if (req.body.QuotationNo !== '') {
+        preList = await Quotation.findAll({
+            where: [{ QuotationNo: req.body.QuotationNo }, { CustomerID: req.body.CustomerID }]
+          },
+          { transaction: t });
+      }
+      if (preList.length > 0) {
+        return res.status(200).json({
+          data: null,
+          message: 'Quotation Exists!',
+          statusCode: StatusCodes.ServerError
+        });
+      } else {
+        const quotation = await Quotation.create({
+            //ID: req.body.ID,
+            CustomerID: req.body.CustomerID,
+            Description: req.body.Description,
+            QuotationNo: req.body.QuotationNo,
+            ExpiryDate: req.body.ExpiryDate,
+            CreatedBy: req.body.CreatedBy
+          },
+          { transaction: t });
 
-          await Audit.create(
-            {
-              userId: '7',
-              description: 'Quotation ' + quotation.getDataValue('QuotationNo') + ' quotation created'
-            },
-            { transaction: t }
-          );
-          res.status(201).json({
-            messsage: 'Quotation created'
-          });
-        }
+        await Audit.create(
+          {
+            userId: '7',
+            description: 'Quotation ' + quotation.getDataValue('QuotationNo') + ' quotation created'
+          },
+          { transaction: t }
+        );
+        res.status(200).json({
+          message: 'Quotation created successfully!'
+        });
+      }
 
-      }).catch(err => {
+    })
+      .then()
+      .catch(err => {
         console.log(err);
         res.status(500).json({
           message: 'Quotation could not be created'
         });
       });
-    });
   } catch (e) {
     console.log(e);
     return res.status(200).json({

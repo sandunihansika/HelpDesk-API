@@ -2,6 +2,7 @@ const db = require('../dbConfig');
 const StatusCodes = require('../common/statusCode');
 const Audit = require('../models/audit');
 const Quotation = require('../models/quotation');
+const Customer = require('../models/customer');
 
 exports.addQuotation = (req, res, next) => {
   try {
@@ -29,6 +30,29 @@ exports.addQuotation = (req, res, next) => {
             CreatedBy: req.body.CreatedBy
           },
           { transaction: t });
+        // Customer.findOne({ where: {HandlingCompany: 'Ingenii', ID:req.body.CustomerID} }).then(function(Customer) {
+        //   Customer.update(
+        //     { Status: 'Need Consent' },
+        //     { where: { ID: req.body.CustomerID }},
+        //     { transaction: t }
+        //   );
+        // })
+        Customer.findOne({ where: { ID: req.body.CustomerID } }).then(function(Customer) {
+          if (Customer.HandlingCompany == 'Ingenii') {
+            Customer.update(
+              { Status: 'Need Consent' },
+              { where: { ID: req.body.CustomerID } },
+              { transaction: t }
+            );
+          } else {
+            Customer.update(
+              { Status: 'Quotation Sent' },
+              { where: { ID: req.body.CustomerID } },
+              { transaction: t }
+            );
+          }
+
+        });
 
         await Audit.create(
           {

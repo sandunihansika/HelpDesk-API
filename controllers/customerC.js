@@ -14,9 +14,11 @@ exports.addCustomer = (req, res, next) => {
         { transaction: t }
       ).then(async (result) => {
         if (result.length >= 1) {
-          return res.status(200).json({
-            message: 'Customer already exists'
-          });
+          const details = await Customer.findAll({
+              where: { NIC: req.body.NIC }
+            },
+            { transaction: t });
+          return res.status(200).json(details);
         } else {
           const customer = await Customer.create(
             {
@@ -26,8 +28,16 @@ exports.addCustomer = (req, res, next) => {
               Email: req.body.Email,
               TelNo: req.body.TelNo,
               Address: req.body.Address,
-              Gender: req.body.Gender
+              Gender: req.body.Gender,
+              HandlingCompany: req.body.HandlingCompany,
+              Status: req.body.Status,
+              Type: req.body.Type
             },
+            { transaction: t }
+          );
+          Customer.update(
+            { Status: 'Pending' },
+            { where: { NIC: req.body.NIC } },
             { transaction: t }
           );
           await Audit.create(

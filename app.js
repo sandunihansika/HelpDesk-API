@@ -11,6 +11,8 @@ const customer = require('./models/customer');
 const quotation = require('./models/quotation');
 const audit = require('./models/audit');
 const upload = require('./models/upload');
+const company = require('./models/company');
+const status = require('./models/status');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -29,8 +31,10 @@ try {
 app.use('/', require('./routes/customerR'));
 app.use('/quotation', require('./routes/quotationR'));
 app.use('/', require('./routes/uploadR'), express.static(path.join(__dirname, '/uploads')));
-
+app.use('/company', require('./routes/companyR'));
 customer.sync();
 quotation.sync();
 audit.sync();
 upload.sync();
+company.sync();
+status.sync();

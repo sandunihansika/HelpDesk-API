@@ -26,13 +26,22 @@ const Customer = db.define('customer', {
     //allowNull: false
   },
   Address: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING
     //allowNull: false
   },
   Gender: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING
     //allowNull: false
   },
+  HandlingCompany: {
+    type: Sequelize.STRING
+  },
+  Status: {
+    type: Sequelize.STRING
+  },
+  Type: {
+    type: Sequelize.STRING
+  }
 }, {
   tableName: 'customer',
   timestamps: false

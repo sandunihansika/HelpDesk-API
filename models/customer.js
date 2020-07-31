@@ -3,43 +3,68 @@ const db = require('../dbConfig');
 
 const Customer = db.define('customer', {
 
-  ID: {
-    type: Sequelize.STRING,
-    primaryKey: true
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true
   },
-  NIC: {
+  nicNumber: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  FirstName: {
+  firstName: {
     type: Sequelize.STRING
   },
-  LastName: {
+  lastName: {
     type: Sequelize.STRING
   },
-  Email: {
+  email: {
     type: Sequelize.STRING
     // allowNull defaults to true
   },
-  TelNo: {
+  telNo: {
     type: Sequelize.STRING
     //allowNull: false
   },
-  Address: {
+  streetAddressLineOne: {
+    type: Sequelize.STRING
+  },
+  streetAddressLineTwo: {
+    type: Sequelize.STRING
+  },
+  city: {
+    type: Sequelize.INTEGER
+  },
+  zipCode: {
+    type: Sequelize.STRING
+  },
+  country: {
+    type: Sequelize.INTEGER
+  },
+  gender: {
     type: Sequelize.STRING
     //allowNull: false
   },
-  Gender: {
-    type: Sequelize.STRING
-    //allowNull: false
+  handlingCompany: {
+    type: Sequelize.INTEGER
   },
-  HandlingCompany: {
+  type: {
+    type: Sequelize.INTEGER
+  },
+  taxNumber: {
     type: Sequelize.STRING
   },
-  Status: {
+  ppNo: {
     type: Sequelize.STRING
   },
-  Type: {
+  companyName: {
+    type: Sequelize.STRING
+  },
+  companyRegistrationNo: {
+    type: Sequelize.STRING
+  },
+  vatNumber: {
     type: Sequelize.STRING
   }
 }, {

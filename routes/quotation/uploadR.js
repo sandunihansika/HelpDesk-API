@@ -3,14 +3,14 @@ const fs = require('fs');
 const router = express.Router();
 const multer = require('multer');
 //const upload = require('../config/multer');
-const uploadC = require('../controllers/uploadC');
+const uploadC = require('../../controllers/quotation/uploadC');
 
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     //cb(null, 'uploads');
-    const { CustomerID } = req.body;
-    const dir = `./uploads/${CustomerID}/quotations`;
+    const { customerID } = req.body;
+    const dir = `./uploads/${customerID}/quotations`;
     fs.stat(dir, exist => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -39,7 +39,9 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
-router.post('/upload', upload.single('pdf'), uploadC.uploadPDF);
+router.post('/upload/:inquiryId', upload.single('pdf'), uploadC.uploadPDF);
 router.get('/download', uploadC.downloadPDF);
+
+router.use('/changeStatus', require('../../routes/quotation/changeStatusR'));
 
 module.exports = router;

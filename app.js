@@ -13,6 +13,8 @@ const audit = require('./models/audit');
 const upload = require('./models/upload');
 const company = require('./models/company');
 const status = require('./models/status');
+const inquiry = require('./models/inquiry');
+const inquirystatus = require('./models/inquiryStatus');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,6 +22,8 @@ app.use(bodyParser.json());
 global.__basedir = __dirname;
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+app.get('/', (req, res) => res.send('Hello Guyzzz.....!'));
+
 
 try {
   db.authenticate();
@@ -28,9 +32,9 @@ try {
   console.error('Unable to connect to the database:', error);
 }
 
-app.use('/', require('./routes/customerR'));
-app.use('/quotation', require('./routes/quotationR'));
-app.use('/', require('./routes/uploadR'), express.static(path.join(__dirname, '/uploads')));
+app.use('/customer', require('./routes/customerR'));
+//app.use('/quotation', require('./routes/quotationR'));
+app.use('/quotation', require('./routes/quotation/uploadR'), express.static(path.join(__dirname, '/uploads')));
 app.use('/company', require('./routes/companyR'));
 customer.sync();
 quotation.sync();
@@ -38,3 +42,5 @@ audit.sync();
 upload.sync();
 company.sync();
 status.sync();
+inquiry.sync();
+inquirystatus.sync();

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const quotationC = require('../controllers/quotationC');
-const uploadC = require('../controllers/uploadC');
+const uploadC = require('../controllers/quotation/uploadC');
 const multer = require('../config/multer');
 
 const app = express();

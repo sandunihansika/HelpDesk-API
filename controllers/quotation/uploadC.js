@@ -1,11 +1,14 @@
 const fs = require('fs');
 const stream = require('stream');
-const db = require('../dbConfig');
-const Upload = require('../models/upload');
-const Quotation = require('../models/quotation');
-const Customer = require('../models/customer');
-const Audit = require('../models/audit');
-const StatusCodes = require('../common/statusCode');
+const db = require('../../dbConfig');
+const Upload = require('../../models/upload');
+const Quotation = require('../../models/quotation');
+const Customer = require('../../models/customer');
+const Audit = require('../../models/audit');
+const InquiryStatus = require('../../models/inquiryStatus');
+const StatusCodes = require('../../common/statusCode');
+const Inquiry = require('../../models/inquiry');
+const statusType = require('../statusTypes');
 
 exports.uploadPDF = (req, res, next) => {
   try {
@@ -16,9 +19,9 @@ exports.uploadPDF = (req, res, next) => {
     // });
     db.transaction(async t => {
       let preList = [];
-      if (req.body.QuotationNo !== '') {
+      if (req.body.quotationNo !== '') {
         preList = await Quotation.findAll({
-            where: [{ QuotationNo: req.body.QuotationNo }, { CustomerID: req.body.CustomerID }]
+            where: [{ quotationNo: req.body.quotationNo }, { customerId: req.body.customerId }]
           },
           { transaction: t });
       }
@@ -30,35 +33,34 @@ exports.uploadPDF = (req, res, next) => {
         });
       } else {
         const quotation = await Quotation.create({
-            CustomerID: req.body.CustomerID,
-            Description: req.body.Description,
-            QuotationNo: req.body.QuotationNo,
-            ExpiryDate: req.body.ExpiryDate,
-            CreatedBy: req.body.CreatedBy
+            customerId: req.body.customerId,
+            description: req.body.description,
+            quotationNo: req.body.quotationNo,
+            expiryDate: req.body.expiryDate,
+            createdBy: req.body.createdBy
           },
           { transaction: t });
 
-        Customer.findOne({ where: { ID: req.body.CustomerID } }).then(function(Customer) {
-          if (Customer.HandlingCompany == 'Ingenii') {
-            Customer.update(
-              { Status: 'Need Consent' },
-              { where: { ID: req.body.CustomerID } },
-              { transaction: t }
-            );
-          } else {
-            Customer.update(
-              { Status: 'Quotation Sent' },
-              { where: { ID: req.body.CustomerID } },
-              { transaction: t }
-            );
-          }
-
+        await Inquiry.findOne({ where: { id: req.params.inquiryId } }, { transaction: t }).then(result => {
+          Inquiry.update({
+              statusId: statusType.Remind_customer
+            },
+            {
+              where: { id: result.getDataValue('id') }
+            }, { transaction: t });
         });
+
+        await InquiryStatus.create({
+          inquiryId: req.params.inquiryId,
+          customerId: req.body.customerId,
+          statusId: statusType.Remind_customer,
+          loginId: req.header.loginId
+        }, { transaction: t });
 
         await Audit.create(
           {
             userId: '7',
-            description: 'Quotation ' + quotation.getDataValue('QuotationNo') + ' quotation created'
+            description: 'Quotation ' + quotation.getDataValue('quotationNo') + ' quotation created'
           },
           { transaction: t }
         );
@@ -97,7 +99,7 @@ exports.downloadPDF = async (req, res, next) => {
   //   readStream.pipe(res);
   // });
   try {
-    let dir = './uploads/' + req.body.id + '/quotations/' + req.body.QuotationNo + '.pdf';
+    let dir = './uploads/' + req.body.id + '/quotations/' + req.body.quotationNo + '.pdf';
     //const { NIC } = req.body
     if (!fs.existsSync(dir)) {
       res.status(200).json({

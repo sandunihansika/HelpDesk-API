@@ -3,31 +3,31 @@ const db = require('../dbConfig');
 
 const Quotation = db.define('quotation', {
 
-  ID: {
+  id: {
     type: Sequelize.INTEGER,
     primaryKey: true
     //autoIncrement: true
   },
-  CustomerID: {
+  customerId: {
     type: Sequelize.STRING,
     allowNull: false,
     references: {
       model: 'customer',
-      key: 'ID'
+      key: 'id'
     }
   },
-  Description: {
+  description: {
     type: Sequelize.STRING
     //allowNull: false
   },
-  QuotationNo: {
+  quotationNo: {
     type: Sequelize.STRING
     // allowNull defaults to true
   },
-  ExpiryDate: {
+  expiryDate: {
     type: Sequelize.DATEONLY
   },
-  CreatedBy: {
+  createdBy: {
     type: Sequelize.STRING
   }
 }, {

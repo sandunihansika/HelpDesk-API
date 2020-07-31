@@ -8,9 +8,9 @@ exports.addQuotation = (req, res, next) => {
   try {
     db.transaction(async t => {
       let preList = [];
-      if (req.body.QuotationNo !== '') {
+      if (req.body.quotationNo !== '') {
         preList = await Quotation.findAll({
-            where: [{ QuotationNo: req.body.QuotationNo }, { CustomerID: req.body.CustomerID }]
+            where: [{ quotationNo: req.body.quotationNo }, { customerID: req.body.customerID }]
           },
           { transaction: t });
       }
@@ -23,11 +23,11 @@ exports.addQuotation = (req, res, next) => {
       } else {
         const quotation = await Quotation.create({
             //ID: req.body.ID,
-            CustomerID: req.body.CustomerID,
-            Description: req.body.Description,
-            QuotationNo: req.body.QuotationNo,
-            ExpiryDate: req.body.ExpiryDate,
-            CreatedBy: req.body.CreatedBy
+            customerID: req.body.customerID,
+            description: req.body.description,
+            quotationNo: req.body.quotationNo,
+            expiryDate: req.body.expiryDate,
+            createdBy: req.body.createdBy
           },
           { transaction: t });
         // Customer.findOne({ where: {HandlingCompany: 'Ingenii', ID:req.body.CustomerID} }).then(function(Customer) {
@@ -37,17 +37,17 @@ exports.addQuotation = (req, res, next) => {
         //     { transaction: t }
         //   );
         // })
-        Customer.findOne({ where: { ID: req.body.CustomerID } }).then(function(Customer) {
-          if (Customer.HandlingCompany == 'Ingenii') {
+        Customer.findOne({ where: { ID: req.body.customerID } }).then(function(Customer) {
+          if (Customer.handlingCompany == 'Ingenii') {
             Customer.update(
               { Status: 'Need Consent' },
-              { where: { ID: req.body.CustomerID } },
+              { where: { ID: req.body.customerID } },
               { transaction: t }
             );
           } else {
             Customer.update(
               { Status: 'Quotation Sent' },
-              { where: { ID: req.body.CustomerID } },
+              { where: { ID: req.body.customerID } },
               { transaction: t }
             );
           }
@@ -57,7 +57,7 @@ exports.addQuotation = (req, res, next) => {
         await Audit.create(
           {
             userId: '7',
-            description: 'Quotation ' + quotation.getDataValue('QuotationNo') + ' quotation created'
+            description: 'Quotation ' + quotation.getDataValue('quotationNo') + ' quotation created'
           },
           { transaction: t }
         );

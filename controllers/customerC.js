@@ -75,13 +75,13 @@ exports.addCustomer = (req, res, next) => {
                   inquiryId: result.getDataValue('id'),
                   customerId: customer.getDataValue('id'),
                   statusId: result.getDataValue('statusId'),
-                  loginId: req.header.loginId
+                  loginId: req.header('loginId')
                 });
               });
           }
           await Audit.create(
             {
-              userId: '14223',
+              userId: req.header('loginId'),
               description: 'Customer id ' + customer.getDataValue('id') + ' created'
             },
             { transaction: t }

@@ -16,7 +16,7 @@ exports.approve = (req, res, next) => {
         inquiryId: req.params.inquiryId,
         customerId: req.params.customerId,
         statusId: statusType.Approved_quotation,
-        loginId: req.header.loginId
+        loginId: req.header('loginId')
       }, { transaction: t });
       res.status(200).json({
         message: 'Status updated successfully'
@@ -50,7 +50,7 @@ exports.reject = (req, res, next) => {
         inquiryId: req.params.inquiryId,
         customerId: req.params.customerId,
         statusId: statusType.Reject_quotation,
-        loginId: req.header.loginId
+        loginId: req.header('loginId')
       }, { transaction: t });
       res.status(200).json({
         message: 'Status updated successfully'
@@ -84,7 +84,7 @@ exports.resend = (req, res, next) => {
         inquiryId: req.params.inquiryId,
         customerId: req.params.customerId,
         statusId: statusType.Resend_quotation,
-        loginId: req.header.loginId
+        loginId: req.header('loginId')
       }, { transaction: t });
       res.status(200).json({
         message: 'Status updated successfully'
@@ -117,8 +117,8 @@ exports.send = (req, res, next) => {
       await InquiryStatus.create({
         inquiryId: req.params.inquiryId,
         customerId: req.params.customerId,
-        statusId: statusType.Resend_quotation,
-        loginId: req.header.loginId
+        statusId: statusType.Send_quotation,
+        loginId: req.header('loginId')
       }, { transaction: t });
       res.status(200).json({
         message: 'Status updated successfully'

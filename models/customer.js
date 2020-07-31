@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
 const db = require('../dbConfig');
+const Inquiry = require('../models/inquiry');
 
 const Customer = db.define('customer', {
 
@@ -71,5 +72,8 @@ const Customer = db.define('customer', {
   tableName: 'customer',
   timestamps: false
 });
+
+Customer.hasMany(Inquiry);
+Inquiry.belongsTo(Customer);
 
 module.exports = Customer;

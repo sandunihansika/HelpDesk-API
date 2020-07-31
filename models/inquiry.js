@@ -47,5 +47,4 @@ const Inquiry = db.define('inquiry', {
   tableName: 'inquiry'
 });
 
-
 module.exports = Inquiry;

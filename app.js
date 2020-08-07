@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
+const cors = require('cors')
 const path = require('path');
 const router = express.Router();
 //const upload = require('./config/multer.ts');
 //const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+
 const port = 3000;
 const db = require('./dbConfig');
 
@@ -15,6 +19,10 @@ const company = require('./models/company');
 const status = require('./models/status');
 const inquiry = require('./models/inquiry');
 const inquirystatus = require('./models/inquiryStatus');
+const complaintype = require('./models/complainType');
+const complain = require('./models/complain');
+
+
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,6 +45,7 @@ app.use('/customer', require('./routes/customerR'));
 app.use('/quotation', require('./routes/quotation/uploadR'), express.static(path.join(__dirname, '/uploads')));
 app.use('/company', require('./routes/companyR'));
 app.use('/inquiry', require('./routes/inquiryDetailsR'));
+app.use('/complain',require('./routes/complainR'));
 customer.sync();
 quotation.sync();
 audit.sync();
@@ -45,3 +54,5 @@ company.sync();
 status.sync();
 inquiry.sync();
 inquirystatus.sync();
+complaintype.sync();
+complain.sync();

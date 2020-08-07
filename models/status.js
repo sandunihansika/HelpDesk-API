@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize');
 const db = require('../dbConfig');
 const Inquiry = require('../models/inquiry');
+const Complain = require('../models/complain')
+
 
 const Status = db.define(
   'status',
@@ -25,5 +27,9 @@ const Status = db.define(
 
 Status.hasMany(Inquiry);
 Inquiry.belongsTo(Status);
+
+Status.hasMany(Complain);
+Complain.belongsTo(Status);
+
 
 module.exports = Status;

@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const db = require('../dbConfig');
 const Inquiry = require('../models/inquiry');
+const Complain = require('../models/complain')
 
 const Customer = db.define('customer', {
 
@@ -75,5 +76,9 @@ const Customer = db.define('customer', {
 
 Customer.hasMany(Inquiry);
 Inquiry.belongsTo(Customer);
+
+Customer.hasMany(Complain);
+Complain.belongsTo(Customer);
+
 
 module.exports = Customer;

@@ -6,7 +6,7 @@ const complainDetails = require('../controllers/complainC')
 // 	res.send("hello thilini");
 // })
 
-router.get('/complainDetails',complainDetails.getDetails)
-
+router.get('/complainDetails',complainDetails.getDetails);
+router.post('/changeComplainStatus',complainDetails.updateComplainStatus);
 
 module.exports = router;

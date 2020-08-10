@@ -5,5 +5,5 @@ module.exports = {
   Approved_quotation: 4,
   Reject_quotation: 5,
   Resend_quotation: 6,
-  Other: 7
+  Re_need_consent: 7
 };

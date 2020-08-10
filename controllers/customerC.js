@@ -8,7 +8,7 @@ const companyName = require('../controllers/companies');
 const statusType = require('../controllers/statusTypes');
 const inquiryType = require('../controllers/inquiryType');
 
-exports.addCustomer = (req, res, next) => {
+exports.addInquiry = (req, res, next) => {
   try {
     db.transaction(async t => {
       await Customer.findAll(
@@ -104,6 +104,43 @@ exports.addCustomer = (req, res, next) => {
       message: 'Server Error',
       statusCode: StatusCodes.ServerError
     });
+  }
+};
+
+exports.addCustomer = (req, res, next) => {
+  try {
+    db.transaction(async t => {
+      await Customer.create(
+        {
+          nicNumber: req.body.nicNumber,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          email: req.body.email,
+          telNo: req.body.telNo,
+          streetAddressLineOne: req.body.streetAddressLineOne,
+          streetAddressLineTwo: req.body.streetAddressLineTwo,
+          city: req.body.city,
+          zipCode: req.body.zipCode,
+          country: req.body.country,
+          gender: req.body.gender,
+          handlingCompany: req.body.handlingCompany,
+          type: req.body.type,
+          taxNumber: req.body.taxNumber,
+          ppNo: req.body.ppNo,
+          companyName: req.body.companyName,
+          companyRegistrationNo: req.body.companyRegistrationNo,
+          vatNumber: req.body.vatNumber
+        },
+        { transaction: t }
+      );
+    }).then(
+      res.status(201).json({
+        message: 'Customer created successfully'
+      })
+    );
+
+  } catch (e) {
+
   }
 };
 

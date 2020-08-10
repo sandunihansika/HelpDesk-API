@@ -122,7 +122,7 @@ exports.getAll = async (req, res, next) => {
   try {
     db.transaction(async t => {
       Quotation.findAll({
-          where: { id: req.params.customerId }
+          where: { customerId: req.params.customerId }
         },
         { transaction: t })
         .then((docs) => {

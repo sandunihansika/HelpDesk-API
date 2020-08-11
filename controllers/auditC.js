@@ -8,10 +8,16 @@ exports.getAudit = (req, res, next) => {
       Audit.findAll({ transaction: t })
         .then((docs) => {
           if (docs.length > 0) {
-            res.status(200).json(docs);
+            res.status(200).json({
+              data: docs,
+              message: 'Audit report retrieved successfully',
+              statusCode: StatusCodes.Success
+            });
           } else {
             res.status(200).json({
-              message: 'No entries found'
+              data: '',
+              message: 'No entries found',
+              statusCode: StatusCodes.Success
             });
           }
         });
@@ -19,14 +25,16 @@ exports.getAudit = (req, res, next) => {
       .catch((err) => {
         console.log(err);
         res.status(500).json({
-          messsage: 'Database not responding'
+          data: '',
+          messsage: 'Audit report generation failed',
+          statusCode: StatusCodes.DBError
         });
       });
   } catch (e) {
     console.log(error);
-    return res.status(200).json({
+    return res.status(500).json({
       data: null,
-      message: 'Customer Server Error',
+      message: 'Get Audit Server Error',
       statusCode: StatusCodes.ServerError
     });
   }

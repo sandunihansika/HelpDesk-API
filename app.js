@@ -40,11 +40,6 @@ try {
   console.error('Unable to connect to the database:', error);
 }
 
-// app.get('/login',(req,res)=>{
-//   res.send("hello thilini");
-// })
-
-
 app.use('/customer', require('./routes/customerR'));
 //app.use('/quotation', require('./routes/quotationR'));
 app.use('/quotation', require('./routes/quotation/uploadR'), express.static(path.join(__dirname, '/uploads')));

@@ -17,21 +17,27 @@ exports.getDetails = (req, res, next) => {
           },
             { model: Status, attributes: ['name'] }]
         }, { transaction: t });
-      res.status(200).json(task);
+      res.status(200).json({
+        data: task,
+        message: 'Inquiry details retrieved successfully',
+        statusCode: StatusCodes.Success
+      });
     }).then()
       .catch(err => {
           console.log(err);
           res.status(500).json({
-            messsage: 'Database not responding'
+            data: '',
+            messsage: 'Cannot get inquiry details',
+            statusCode: StatusCodes.DBError
           });
         }
       );
 
   } catch (e) {
     console.log(e);
-    return res.status(200).json({
+    return res.status(500).json({
       data: null,
-      message: 'Server Error',
+      message: 'Get details server error',
       statusCode: StatusCodes.ServerError
     });
   }
@@ -44,21 +50,27 @@ exports.getHistory = (req, res, next) => {
         {
           where: { inquiryId: req.params.inquiryId }
         }, { transaction: t });
-      res.status(200).json(inquiryHistory);
+      res.status(200).json({
+        data: inquiryHistory,
+        message: 'History retrieved successfully',
+        statusCode: StatusCodes.Success
+      });
     }).then()
       .catch(err => {
           console.log(err);
           res.status(500).json({
-            messsage: 'Database not responding'
+            data: '',
+            messsage: 'Cannot get history',
+            statusCode: StatusCodes.DBError
           });
         }
       );
 
   } catch (e) {
     console.log(e);
-    return res.status(200).json({
+    return res.status(500).json({
       data: null,
-      message: 'Server Error',
+      message: 'Get history server error',
       statusCode: StatusCodes.ServerError
     });
   }

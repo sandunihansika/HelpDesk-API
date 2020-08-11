@@ -13,7 +13,6 @@ const Customer = db.define('customer', {
   },
   nicNumber: {
     type: Sequelize.STRING,
-    allowNull: false
   },
   firstName: {
     type: Sequelize.STRING
@@ -36,13 +35,13 @@ const Customer = db.define('customer', {
     type: Sequelize.STRING
   },
   city: {
-    type: Sequelize.INTEGER
+    type: Sequelize.STRING
   },
   zipCode: {
     type: Sequelize.STRING
   },
   country: {
-    type: Sequelize.INTEGER
+    type: Sequelize.STRING
   },
   gender: {
     type: Sequelize.STRING
@@ -79,6 +78,5 @@ Inquiry.belongsTo(Customer);
 
 Customer.hasMany(Complain);
 Complain.belongsTo(Customer);
-
 
 module.exports = Customer;

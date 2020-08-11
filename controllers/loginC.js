@@ -9,8 +9,8 @@ exports.getLoginDetails = (req,res)=>{
 }
 
 exports.checkLoginDetails = (req,res,next)=> {
-	console.log(req.body.email, req.body.password, req.headers.usertype,req.headers);
-	res.locals.newuserType =  userType.AdminUser;
-	console.log(res.locals.newuserType);
+	//console.log(req.body.email, req.body.password, req.headers.usertype,req.headers);
+	res.locals.newuserType = userType.AdminUser;
+	//console.log(res.locals.newuserType);
 	next();
 }

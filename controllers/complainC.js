@@ -37,7 +37,7 @@ exports.getDetails = (req,res,next)=>{
 	}
 	catch (e) {
 		console.log(e);
-		return res.status(200).json({
+		return res.status(500).json({
 			data: null,
 			message: 'Server Error',
 			statusCode: StatusCode.ServerError
@@ -66,15 +66,10 @@ exports.updateComplainStatus = (req,res,next)=>{
 		}
 		catch (e) {
 			console.log(e);
-			return res.status(200).json({
+			return res.status(500).json({
 				data: null,
 				message: 'Complain Server Error',
 				statusCode: StatusCodes.ServerError
 			});
 		}
-
-
-
-
-
 }

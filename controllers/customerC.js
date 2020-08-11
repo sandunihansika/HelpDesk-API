@@ -18,7 +18,11 @@ exports.addInquiry = (req, res, next) => {
         { transaction: t }
       ).then(async (result) => {
         if (result.length >= 1) {
-          return res.status(200).json(result);
+          return res.status(200).json({
+            data: result,
+            message: 'Customer already exists',
+            statusCode: StatusCodes.Success
+          });
         } else {
           const customer = await Customer.create(
             {
@@ -87,21 +91,25 @@ exports.addInquiry = (req, res, next) => {
             { transaction: t }
           );
           res.status(201).json({
-            messsage: 'User created'
+            data: null,
+            message: 'Customer and inquiry created',
+            statusCode: StatusCodes.Success
           });
         }
       });
     }).catch((err) => {
       console.log(err);
       res.status(500).json({
-        messsage: 'User could not be created'
+        data: '',
+        messsage: 'User could not be created',
+        statusCode: StatusCodes.DBError
       });
     });
   } catch (e) {
     console.log(e);
-    return res.status(200).json({
+    return res.status(500).json({
       data: null,
-      message: 'Server Error',
+      message: 'Add inquiry server error',
       statusCode: StatusCodes.ServerError
     });
   }
@@ -110,7 +118,7 @@ exports.addInquiry = (req, res, next) => {
 exports.addCustomer = (req, res, next) => {
   try {
     db.transaction(async t => {
-      await Customer.create(
+      const customer = await Customer.create(
         {
           nicNumber: req.body.nicNumber,
           firstName: req.body.firstName,
@@ -133,14 +141,36 @@ exports.addCustomer = (req, res, next) => {
         },
         { transaction: t }
       );
+      await Audit.create(
+        {
+          userId: req.header('loginId'),
+          description: 'Customer id ' + customer.getDataValue('id') + ' created'
+        },
+        { transaction: t }
+      );
     }).then(
       res.status(201).json({
-        message: 'Customer created successfully'
+        data: null,
+        message: 'Customer created successfully',
+        statusCode: StatusCodes.Success
       })
-    );
+    )
+      .catch(e => {
+        console.log(e);
+        return res.status(200).json({
+          data: null,
+          message: 'Customer cannot be created',
+          statusCode: StatusCodes.DBError
+        });
+      });
 
   } catch (e) {
-
+    console.log(e);
+    return res.status(500).json({
+      data: null,
+      message: 'Server Error',
+      statusCode: StatusCodes.ServerError
+    });
   }
 };
 
@@ -152,10 +182,16 @@ exports.getCustomer = (req, res, next) => {
           { transaction: t })
           .then((docs) => {
             if (docs.length > 0) {
-              res.status(200).json(docs);
+              res.status(200).json({
+                data: docs,
+                message: 'Customer details of DIMO Lanka found',
+                statusCode: StatusCodes.Success
+              });
             } else {
               res.status(200).json({
-                message: 'No entries found'
+                data: '',
+                message: 'No entries found in DIMO Lanka',
+                statusCode: StatusCodes.Success
               });
             }
           });
@@ -164,10 +200,16 @@ exports.getCustomer = (req, res, next) => {
           { transaction: t })
           .then((docs) => {
             if (docs.length > 0) {
-              res.status(200).json(docs);
+              res.status(200).json({
+                data: docs,
+                message: 'Customer details of Ingenii Lanka found',
+                statusCode: StatusCodes.Success
+              });
             } else {
               res.status(200).json({
-                message: 'No entries found'
+                data: null,
+                message: 'No entries found in Ingenii Lanka',
+                statusCode: StatusCodes.Success
               });
             }
           });
@@ -176,14 +218,16 @@ exports.getCustomer = (req, res, next) => {
     }).catch((err) => {
       console.log(err);
       res.status(500).json({
-        messsage: 'Database not responding'
+        data: '',
+        messsage: 'Cannot find details',
+        statusCode: StatusCodes.DBError
       });
     });
   } catch (e) {
     console.log(error);
-    return res.status(200).json({
+    return res.status(500).json({
       data: null,
-      message: 'Customer Server Error',
+      message: 'Get Customer Server Error',
       statusCode: StatusCodes.ServerError
     });
   }
@@ -195,10 +239,16 @@ exports.getAllCustomers = (req, res, next) => {
       Customer.findAll({ transaction: t })
         .then((docs) => {
           if (docs.length > 0) {
-            res.status(200).json(docs);
+            res.status(200).json({
+              data: docs,
+              message: 'Customer details found',
+              statusCode: StatusCodes.Success
+            });
           } else {
             res.status(200).json({
-              message: 'No entries found'
+              data: '',
+              message: 'No entries found',
+              statusCode: StatusCodes.Success
             });
           }
         });
@@ -206,14 +256,16 @@ exports.getAllCustomers = (req, res, next) => {
       .catch((err) => {
         console.log(err);
         res.status(500).json({
-          messsage: 'Database not responding'
+          data: '',
+          messsage: 'Cannot find details',
+          statusCode: StatusCodes.DBError
         });
       });
   } catch (e) {
     console.log(error);
-    return res.status(200).json({
+    return res.status(500).json({
       data: null,
-      message: 'Customer Server Error',
+      message: 'Get all customer server error',
       statusCode: StatusCodes.ServerError
     });
   }

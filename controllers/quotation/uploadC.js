@@ -65,7 +65,9 @@ exports.uploadPDF = (req, res, next) => {
           { transaction: t }
         );
         res.status(201).json({
-          messsage: 'Quotation created and uploaded successfully'
+          data: null,
+          messsage: 'Quotation created and uploaded successfully',
+          statusCode: StatusCodes.Success
         });
       }
 
@@ -74,7 +76,9 @@ exports.uploadPDF = (req, res, next) => {
       .catch(err => {
         console.log(err);
         res.status(500).json({
-          message: 'Quotation could not be created'
+          data: '',
+          message: 'Quotation could not be created',
+          statusCode: StatusCodes.DBError
         });
       });
 
@@ -104,14 +108,14 @@ exports.downloadPDF = async (req, res, next) => {
     if (!fs.existsSync(dir)) {
       res.status(200).json({
         data: null,
-        message: 'Report  Not Generate!'
+        message: 'Report  Not Generated!'
       });
     } else {
       res.download(dir);
     }
   } catch (e) {
     console.log(e);
-    res.status(200).json({
+    res.status(500).json({
       data: null,
       message: 'Report Download Validation Error'
     });
@@ -127,10 +131,16 @@ exports.getAll = async (req, res, next) => {
         { transaction: t })
         .then((docs) => {
           if (docs.length > 0) {
-            res.status(200).json(docs);
+            res.status(200).json({
+              data: docs,
+              message: 'Quotation retrieved successfully',
+              statusCode: StatusCodes.Success
+            });
           } else {
             res.status(200).json({
-              message: 'No entries found'
+              data: null,
+              message: 'No entries found',
+              statusCode: StatusCodes.Success
             });
           }
         });
@@ -138,14 +148,16 @@ exports.getAll = async (req, res, next) => {
       .catch((err) => {
         console.log(err);
         res.status(500).json({
-          messsage: 'Database not responding'
+          data: null,
+          message: 'Cound not get quotation',
+          statusCode: StatusCodes.DBError
         });
       });
   } catch (e) {
     console.log(error);
-    return res.status(200).json({
+    return res.status(500).json({
       data: null,
-      message: 'Customer Server Error',
+      message: 'Get all quotation error',
       statusCode: StatusCodes.ServerError
     });
   }

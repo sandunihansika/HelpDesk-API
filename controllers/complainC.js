@@ -4,6 +4,8 @@ const Customer = require('../models/customer');
 const Status = require('../models/status');
 const Complain = require('../models/complain');
 const ComplainType = require('../models/complainType');
+const statusType = require('../controllers/statusTypes');
+const Audit = require('../models/audit');
 
 exports.getDetails = (req,res,next)=>{
 	try{
@@ -72,4 +74,91 @@ exports.updateComplainStatus = (req,res,next)=>{
 				statusCode: StatusCodes.ServerError
 			});
 		}
+}
+
+//get customer details
+exports.getComplainDetails = (req,res,next) => {
+	try{
+		db.transaction(async t => {
+			Customer.findAll({
+				where: { id: req.params.customerId }
+				},
+				{ transaction: t })
+				.then((details) => {
+					if (details.length > 0) {
+						res.status(200).json({
+							data: details,
+							message: 'Customer details received successfully',
+							statusCode: StatusCode.Success
+						});
+					} else {
+						res.status(200).json({
+							data: null,
+							message: 'No details found',
+							statusCode: StatusCode.Success
+						});
+					}
+				});
+		})
+			.catch((err) => {
+				console.log(err);
+				res.status(500).json({
+					data: null,
+					message: 'Could not get customer',
+					statusCode: StatusCode.DBError
+				});
+			});
+	} catch (e) {
+		console.log(e);
+		return res.status(500).json({
+			data: null,
+			message: 'view Customer details error',
+			statusCode: StatusCode.ServerError
+		});
+	}
+};
+
+//Add complains
+exports.addComplain = (req,res,next) => {
+	try {
+		db.transaction(async t => {
+			const complain = await Complain.create({
+				customerId: req.body.customerId,
+				contactPerson: req.body.contactPerson,
+				contactPersonNumber: req.body.contactPersonNumber,
+				designation: req.body.designation,
+				description: req.body.description,
+				complainTypeId: req.body.complainTypeId,
+				statusId: statusType.Pending
+			},
+				{ transaction: t });
+			await Audit.create(
+				{
+					userId: req.header('loginId'),
+					description: 'Complain Id ' + complain.getDataValue('id') + ' created'
+				},
+				{ transaction: t }
+			);
+			res.status(201).json({
+				data: null,
+				message: 'Complain created successfully',
+				statusCode: StatusCode.Success
+			})
+		}).then()
+			.catch(e => {
+				console.log(e);
+				res.status(200).json({
+					data: null,
+					message: 'Complain cannot be created',
+					statusCode: StatusCode.DBError
+				});
+			});
+	} catch (e) {
+		console.log(e);
+		return res.status(500).json({
+			data: null,
+			message: 'Server error',
+			statusCode: StatusCode.ServerError
+		});
+	}
 }

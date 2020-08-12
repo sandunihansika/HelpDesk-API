@@ -19,8 +19,8 @@ router.get('/getHistory/:inquiryId',
     res.locals.newuserType = UserType.AdminUser;
     next();
   },
-  checkToken,
-  checkUserType,
+  // checkToken,
+  // checkUserType,
   inquiryDetails.getHistory);
 
 module.exports = router;

@@ -46,7 +46,8 @@ app.use('/quotation', require('./routes/quotation/uploadR'), express.static(path
 app.use('/company', require('./routes/companyR'));
 app.use('/inquiry', require('./routes/inquiryDetailsR'));
 app.use('/complain',require('./routes/complainR'));
-app.use('/loginUser',require('./routes/loginR'));
+app.use('/loginUser', require('./routes/loginR'));
+app.use('/', require('./routes/auditR'));
 
 
 customer.sync();

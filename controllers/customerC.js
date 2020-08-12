@@ -148,13 +148,12 @@ exports.addCustomer = (req, res, next) => {
         },
         { transaction: t }
       );
-    }).then(
       res.status(201).json({
         data: null,
         message: 'Customer created successfully',
         statusCode: StatusCodes.Success
-      })
-    )
+      });
+    }).then()
       .catch(e => {
         console.log(e);
         return res.status(200).json({

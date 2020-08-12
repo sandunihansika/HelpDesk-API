@@ -48,7 +48,8 @@ exports.getHistory = (req, res, next) => {
     db.transaction(async t => {
       const inquiryHistory = await InquiryStatus.findAll(
         {
-          where: { inquiryId: req.params.inquiryId }
+          where: { inquiryId: req.params.inquiryId },
+          include: { model: Status, attributes: ['name'] }
         }, { transaction: t });
       res.status(200).json({
         data: inquiryHistory,

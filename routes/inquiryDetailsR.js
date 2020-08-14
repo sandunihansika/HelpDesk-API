@@ -10,8 +10,8 @@ router.get('/inquiryDetails',
     res.locals.newuserType = UserType.AdminUser;
     next();
   },
-  checkToken,
-  checkUserType,
+  // checkToken,
+  // checkUserType,
   inquiryDetails.getDetails);
 
 router.get('/getHistory/:inquiryId',

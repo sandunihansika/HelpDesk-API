@@ -9,8 +9,9 @@ const uploadC = require('../../controllers/quotation/uploadC');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     //cb(null, 'uploads');
-    const { customerID } = req.body;
-    const dir = `./uploads/${customerID}/quotations`;
+    console.log('PDF attached');
+    //const { customerId } = ;
+    const dir = `./uploads/${req.body.customerId}/quotations`;
     fs.stat(dir, exist => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -23,10 +24,12 @@ const storage = multer.diskStorage({
     });
   },
   filename: (req, file, cb) => {
-    console.log(file);
+    const quotationNo = req.body.quotationNo;
+    //console.log(file);
     var d = new Date();
     let fname = d.toISOString().replace(/:/g, '-');
-    cb(null, fname + ' ' + file.originalname);
+    //cb(null, fname + ' ' + file.originalname);
+    cb(null, quotationNo + '.pdf');
   }
 });
 const fileFilter = (req, file, cb) => {
@@ -38,6 +41,10 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage: storage, fileFilter: fileFilter });
+//
+// function upload(req,res){
+//
+// }
 
 router.post('/upload/:inquiryId', upload.single('pdf'), uploadC.uploadPDF);
 router.get('/download', uploadC.downloadPDF);

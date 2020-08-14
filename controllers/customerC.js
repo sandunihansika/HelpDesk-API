@@ -11,91 +11,124 @@ const inquiryType = require('../controllers/inquiryType');
 exports.addInquiry = (req, res, next) => {
   try {
     db.transaction(async t => {
-      await Customer.findAll(
-        {
-          where: { nicNumber: req.body.nicNumber }
-        },
-        { transaction: t }
-      ).then(async (result) => {
-        if (result.length >= 1) {
-          return res.status(200).json({
-            data: result,
-            message: 'Customer already exists',
-            statusCode: StatusCodes.Success
-          });
-        } else {
-          const customer = await Customer.create(
-            {
-              nicNumber: req.body.nicNumber,
-              firstName: req.body.firstName,
-              lastName: req.body.lastName,
-              email: req.body.email,
-              telNo: req.body.telNo,
-              streetAddressLineOne: req.body.streetAddressLineOne,
-              streetAddressLineTwo: req.body.streetAddressLineTwo,
-              city: req.body.city,
+      let idList = [];
+      if (req.body.id !== null) {
+        idList = await Customer.findAll(
+          {
+            where: { id: req.body.id }
+          },
+          { transaction: t }
+        ).then(async (result) => {
+          if (result.length >= 1) {
+            const customer = await Customer.update({
+                nicNumber: req.body.nicNumber,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                telNo: req.body.telNo,
+                streetAddressLineOne: req.body.streetAddressLineOne,
+                streetAddressLineTwo: req.body.streetAddressLineTwo,
+                city: req.body.city,
+                zipCode: req.body.zipCode,
+                country: req.body.country,
+                gender: req.body.gender,
+                handlingCompany: req.body.handlingCompany,
+                type: req.body.type,
+                taxNumber: req.body.taxNumber,
+                ppNo: req.body.ppNo,
+                companyName: req.body.companyName,
+                companyRegistrationNo: req.body.companyRegistrationNo,
+                vatNumber: req.body.vatNumber
+              },
+              { where: { id: req.body.id } }, { transaction: t });
+            // return res.status(200).json({
+            //   data: result,
+            //   message: 'Customer already exists',
+            //   statusCode: StatusCodes.Success
+            // });
+            res.locals.customerId = req.body.id;
+          }
+        });
+      } else {
+        const customer = await Customer.create(
+          {
+            nicNumber: req.body.nicNumber,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            telNo: req.body.telNo,
+            streetAddressLineOne: req.body.streetAddressLineOne,
+            streetAddressLineTwo: req.body.streetAddressLineTwo,
+            city: req.body.city,
               zipCode: req.body.zipCode,
               country: req.body.country,
               gender: req.body.gender,
-              handlingCompany: req.body.handlingCompany,
-              type: req.body.type,
-              taxNumber: req.body.taxNumber,
-              ppNo: req.body.ppNo,
-              companyName: req.body.companyName,
-              companyRegistrationNo: req.body.companyRegistrationNo,
-              vatNumber: req.body.vatNumber
-            },
-            { transaction: t }
-          );
-          if (req.body.handlingCompany == 3) {
-            const inquiry = await Inquiry.create({
-                customerId: customer.getDataValue('id'),
-                contactPerson: req.body.contactPerson,
-                designation: req.body.designation,
-                contactPersonNumber: req.body.contactPersonNumber,
-                description: req.body.description,
-                statusId: (req.params.inquiryType == inquiryType.Quotation || req.params.inquiryType == inquiryType.Quotation_with_details) ? statusType.Need_consent : statusType.Other
-              },
-              { transaction: t })
-              .then(result => {
-                InquiryStatus.create({
-                  inquiryId: result.getDataValue('id'),
-                  customerId: customer.getDataValue('id'),
-                  statusId: result.getDataValue('statusId'),
-                  loginId: req.header.loginId
-                }, { transaction: t });
-              });
-          } else {
-            const inquiry2 = await Inquiry.create({
-              customerId: customer.getDataValue('id'),
-              contactPerson: req.body.contactPerson,
-              designation: req.body.designation,
-              contactPersonNumber: req.body.contactPersonNumber,
-              description: req.body.description,
-              statusId: (req.params.inquiryType == inquiryType.Quotation || req.params.inquiryType == inquiryType.Quotation_with_details) ? statusType.Send_quotation : statusType.Other
-            }, { transaction: t })
-              .then(result => {
-                InquiryStatus.create({
-                  inquiryId: result.getDataValue('id'),
-                  customerId: customer.getDataValue('id'),
-                  statusId: result.getDataValue('statusId'),
-                  loginId: req.header('loginId')
-                });
-              });
-          }
-          await Audit.create(
-            {
-              userId: req.header('loginId'),
-              description: 'Customer id ' + customer.getDataValue('id') + ' created'
-            },
-            { transaction: t }
-          );
-          res.status(201).json({
-            data: null,
-            message: 'Customer and inquiry created',
-            statusCode: StatusCodes.Success
+            handlingCompany: req.body.handlingCompany,
+            type: req.body.type,
+            taxNumber: req.body.taxNumber,
+            ppNo: req.body.ppNo,
+            companyName: req.body.companyName,
+            companyRegistrationNo: req.body.companyRegistrationNo,
+            vatNumber: req.body.vatNumber
+          },
+          { transaction: t }
+        );
+        const customerId = customer.getDataValue('id');
+        res.locals.customerId = customerId;
+        //deleted part comes here
+      }
+      if (req.body.handlingCompany == 3) {
+        const inquiry = await Inquiry.create({
+            //customerId: customer.getDataValue('id'),
+            customerId: res.locals.customerId,
+            contactPerson: req.body.contactPerson,
+            designation: req.body.designation,
+            contactPersonNumber: req.body.contactPersonNumber,
+            description: req.body.description,
+            statusId: (req.body.inquiryType == inquiryType.Quotation || req.body.inquiryType == inquiryType.Quotation_with_details) ? statusType.Need_consent : statusType.Other
+          },
+          { transaction: t })
+          .then(result => {
+            InquiryStatus.create({
+              inquiryId: result.getDataValue('id'),
+              //customerId: customer.getDataValue('id') || res.locals.customerId,
+              customerId: res.locals.customerId,
+              statusId: result.getDataValue('statusId'),
+              loginId: req.header.loginId
+            }, { transaction: t });
           });
-        }
+      } else {
+        const inquiry2 = await Inquiry.create({
+          //customerId: customer.getDataValue('id'),
+          customerId: res.locals.customerId,
+          contactPerson: req.body.contactPerson,
+          designation: req.body.designation,
+          contactPersonNumber: req.body.contactPersonNumber,
+          description: req.body.description,
+          statusId: (req.body.inquiryType == inquiryType.Quotation || req.body.inquiryType == inquiryType.Quotation_with_details) ? statusType.Send_quotation : statusType.Other
+        }, { transaction: t })
+          .then(result => {
+            InquiryStatus.create({
+              inquiryId: result.getDataValue('id'),
+              //customerId: customer.getDataValue('id'),
+              customerId: res.locals.customerId,
+              statusId: result.getDataValue('statusId'),
+              loginId: req.header('loginId')
+            }, { transaction: t });
+          });
+
+      }
+      await Audit.create(
+        {
+          userId: req.header('loginId'),
+          description: 'Customer id ' + /*customer.getDataValue('id')*/ res.locals.customerId + ' and inquiry created'
+        },
+        { transaction: t }
+      );
+      res.status(201).json({
+        data: null,
+        message: 'Customer and inquiry created',
+        statusCode: StatusCodes.Success
       });
     }).catch((err) => {
       console.log(err);

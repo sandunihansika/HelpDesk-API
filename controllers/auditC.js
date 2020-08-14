@@ -1,8 +1,9 @@
+const Sequelize = require('sequelize');
+
 const db = require('../dbConfig');
 const StatusCodes = require('../common/statusCode');
 const Audit = require('../models/audit');
 const axios = require('axios');
-
 exports.getAudit = (req, res, next) => {
   try {
     // axios.get('http://13.251.96.119:5001/userDetails', {
@@ -26,7 +27,7 @@ exports.getAudit = (req, res, next) => {
     //   });
     db.transaction(async t => {
       const audit = await Audit.findAll(
-        { attributes: ['userId'] },
+        { attributes: [Sequelize.fn('DISTINCT', Sequelize.col('userId')), 'userId'] },
         { transaction: t })
         .then((docs) => {
           if (docs.length > 0) {
@@ -35,7 +36,6 @@ exports.getAudit = (req, res, next) => {
             //   message: 'Audit report retrieved successfully',
             //   statusCode: StatusCodes.Success
             // });
-
             axios.get('http://13.251.96.119:5001/userDetails', {
               params: { docs }
             })

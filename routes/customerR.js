@@ -10,32 +10,35 @@ router.post('/addCustomer',
     res.locals.newuserType = UserType.AdminUser;
     next();
   },
-  checkToken,
-  checkUserType, customerC.addCustomer);
+  // checkToken,
+  // checkUserType,
+  customerC.addCustomer);
 
-router.post('/add/:inquiryType',
+router.post('/add',
   (req, res, next) => {
     res.locals.newuserType = UserType.AdminUser;
     next();
   },
-  checkToken,
-  checkUserType, customerC.addInquiry);
+  // checkToken,
+  // checkUserType,
+  customerC.addInquiry);
 
 router.get('/existing/:handlingCompany',
   (req, res, next) => {
     res.locals.newuserType = UserType.AdminUser;
     next();
   },
-  checkToken,
-  checkUserType, customerC.getCustomer);
+  // checkToken,
+  // checkUserType,
+  customerC.getCustomer);
 
 router.get('/getAllCustomers',
   (req, res, next) => {
     res.locals.newuserType = UserType.AdminUser;
     next();
   },
-  checkToken,
-  checkUserType,
+  //checkToken,
+  // checkUserType,
   customerC.getAllCustomers);
 
 module.exports = router;

@@ -7,5 +7,6 @@ module.exports = {
   Resend_quotation: 6,
   Re_need_consent: 7,
   Pending: 8,
-  Completed: 9
+  Completed: 9,
+  Other: 10
 };

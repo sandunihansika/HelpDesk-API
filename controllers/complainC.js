@@ -6,6 +6,8 @@ const Complain = require('../models/complain');
 const ComplainType = require('../models/complainType');
 const statusType = require('../controllers/statusTypes');
 const Audit = require('../models/audit');
+const sequelize = require('sequelize');
+const StatusCodes = require('../common/statusCode');
 
 exports.getDetails = (req,res,next)=>{
 	try{
@@ -159,6 +161,38 @@ exports.addComplain = (req,res,next) => {
 			data: null,
 			message: 'Server error',
 			statusCode: StatusCode.ServerError
+		});
+	}
+}
+
+exports.getComplaintStatusCount = (req, res, next) => {
+	try {
+		db.transaction(async t => {
+			const complaintStatusCount = await Complain.findAll({
+				attributes: ['Complain.statusId', [sequelize.fn('count', 'Complain.statusId'), 'count']],
+				group : ['Complain.statusId']
+			}, { transaction: t }).then();
+			res.status(200).json({
+				data: complaintStatusCount,
+				message: 'Status count retrieved successfully',
+				statusCode: StatusCodes.Success
+			});
+		}).then()
+			.catch(err => {
+					console.log(err);
+					res.status(500).json({
+						data: '',
+						messsage: 'Cannot get count',
+						statusCode: StatusCodes.DBError
+					});
+				}
+			);
+	} catch (e) {
+		console.log(e);
+		return res.status(500).json({
+			data: null,
+			message: 'Get status server error',
+			statusCode: StatusCodes.ServerError
 		});
 	}
 }

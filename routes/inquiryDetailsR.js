@@ -23,4 +23,13 @@ router.get('/getHistory/:inquiryId',
   // checkUserType,
   inquiryDetails.getHistory);
 
+router.get('/getStatusCount',
+  (req, res, next) => {
+    res.locals.newuserType = UserType.AdminUser;
+    next();
+  },
+  // checkToken,
+  // checkUserType,
+  inquiryDetails.getStatusCount)
+
 module.exports = router;

@@ -13,10 +13,10 @@ exports.getDetails = (req,res,next)=>{
 	try{
 		db.transaction(async t=>{
 			const data = await Complain.findAll({
-				attributes : ['id', 'customerId', 'contactPerson',  'contactPersonNumber','designation','description', 'customer.firstName'],
+				attributes : ['id', 'customerId', 'contactPerson',  'contactPersonNumber','designation','description', 'customer.firstName', 'statusId'],
 				include : [{
 					model : Customer,
-					attributes: ['firstName', 'companyName','handlingCompany']
+					attributes: ['firstName', 'lastName', 'companyName','handlingCompany']
 				},
 					{
 						model : Status,
@@ -169,7 +169,7 @@ exports.getComplaintStatusCount = (req, res, next) => {
 	try {
 		db.transaction(async t => {
 			const complaintStatusCount = await Complain.findAll({
-				attributes: ['Complain.statusId', [sequelize.fn('count', 'Complain.statusId'), 'count']],
+				attributes: ['statusId', [sequelize.fn('count', 'Complain.statusId'), 'count']],
 				group : ['Complain.statusId']
 			}, { transaction: t }).then();
 			res.status(200).json({

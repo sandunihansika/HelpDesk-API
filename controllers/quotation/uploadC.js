@@ -93,6 +93,7 @@ exports.uploadPDF = (req, res, next) => {
 };
 
 exports.downloadPDF = async (req, res, next) => {
+  console.log('Download pdf api IN');
   // Upload.findByPk(req.params.id).then(file => {
   //   const fileContents = Buffer.from(file.data, 'base64');
   //   const readStream = new stream.PassThrough();
@@ -104,16 +105,19 @@ exports.downloadPDF = async (req, res, next) => {
   //   readStream.pipe(res);
   // });
   try {
-    let dir = './uploads/' + req.body.customerId + '/quotations/' + req.body.quotationNo + '.pdf';
+    let dir = `./uploads/${req.params.customerId}/quotations/${req.params.quotationNo}.pdf`;
+    //let dir = './uploads/' + 1190 + '/quotations/' + 987 + '.pdf';
     //const { NIC } = req.body
-    if (!fs.existsSync(dir)) {
-      res.status(200).json({
-        data: null,
-        message: 'Report  Not Generated!'
-      });
-    } else {
-      res.download(dir);
-    }
+    // if (!fs.existsSync(dir)) {
+    //   res.status(200).json({
+    //     data: null,
+    //     message: 'Report  Not Generated!'
+    //   });
+    // } else {
+    //   res.download(dir);
+    //   console.log("Downloaded");
+    // }
+    res.download(dir);
   } catch (e) {
     console.log(e);
     res.status(500).json({

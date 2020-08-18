@@ -47,8 +47,8 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 // }
 
 router.post('/upload/:inquiryId', upload.single('pdf'), uploadC.uploadPDF);
-router.get('/download', uploadC.downloadPDF);
-router.get('/:customerId', uploadC.getAll);
+router.get('/download/:customerId/:quotationNo', uploadC.downloadPDF);
+router.get('/getQuotations/:customerId', uploadC.getAll);
 
 router.use('/changeStatus', require('../../routes/quotation/changeStatusR'));
 

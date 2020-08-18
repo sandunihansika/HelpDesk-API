@@ -196,3 +196,35 @@ exports.getComplaintStatusCount = (req, res, next) => {
 		});
 	}
 }
+
+exports.getComplaintDateCount = (req, res, next) => {
+	try {
+		db.transaction(async t => {
+			const complaintDateCount = await Complain.findAll({
+				attributes: [ [sequelize.fn('MONTH', sequelize.col('Complain.createdAt')), 'month'],[sequelize.fn('count', 'Complain.createdAt'), 'count']],
+				group : [[sequelize.fn('MONTH', sequelize.col('Complain.createdAt')), 'data']],
+			}, { transaction: t }).then();
+			res.status(200).json({
+				data: complaintDateCount,
+				message: 'Date count retrieved successfully',
+				statusCode: StatusCodes.Success
+			});
+		}).then()
+			.catch(err => {
+					console.log(err);
+					res.status(500).json({
+						data: '',
+						messsage: 'Cannot get count',
+						statusCode: StatusCodes.DBError
+					});
+				}
+			);
+	} catch (e) {
+		console.log(e);
+		return res.status(500).json({
+			data: null,
+			message: 'Get date server error',
+			statusCode: StatusCodes.ServerError
+		});
+	}
+}

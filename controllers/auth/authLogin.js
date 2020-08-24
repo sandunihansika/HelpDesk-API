@@ -41,7 +41,7 @@ exports.userLogin = (req, res, next) => {
       clientId: +req.header('clientId')
     }, { headers: { userType: req.header('userType') } })
       .then(function(responseLogin) {
-        console.log(responseLogin);
+        //console.log(responseLogin);
         if (responseLogin.data.statusCode === StatusCodes.Success) {
 
           const responseData = {

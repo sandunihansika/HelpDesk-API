@@ -13,10 +13,10 @@ exports.getDetails = (req,res,next)=>{
 	try{
 		db.transaction(async t=>{
 			const data = await Complain.findAll({
-				attributes : ['id', 'customerId', 'contactPerson',  'contactPersonNumber','designation','description', 'customer.firstName'],
+				attributes : ['id', 'customerId', 'contactPerson',  'contactPersonNumber','designation','description', 'customer.firstName', 'statusId'],
 				include : [{
 					model : Customer,
-					attributes: ['firstName', 'companyName','handlingCompany']
+					attributes: ['firstName', 'lastName', 'companyName','handlingCompany']
 				},
 					{
 						model : Status,
@@ -169,7 +169,7 @@ exports.getComplaintStatusCount = (req, res, next) => {
 	try {
 		db.transaction(async t => {
 			const complaintStatusCount = await Complain.findAll({
-				attributes: ['Complain.statusId', [sequelize.fn('count', 'Complain.statusId'), 'count']],
+				attributes: ['statusId', [sequelize.fn('count', 'Complain.statusId'), 'count']],
 				group : ['Complain.statusId']
 			}, { transaction: t }).then();
 			res.status(200).json({
@@ -192,6 +192,38 @@ exports.getComplaintStatusCount = (req, res, next) => {
 		return res.status(500).json({
 			data: null,
 			message: 'Get status server error',
+			statusCode: StatusCodes.ServerError
+		});
+	}
+}
+
+exports.getComplaintDateCount = (req, res, next) => {
+	try {
+		db.transaction(async t => {
+			const complaintDateCount = await Complain.findAll({
+				attributes: [ [sequelize.fn('MONTH', sequelize.col('Complain.createdAt')), 'month'],[sequelize.fn('count', 'Complain.createdAt'), 'count']],
+				group : [[sequelize.fn('MONTH', sequelize.col('Complain.createdAt')), 'data']],
+			}, { transaction: t }).then();
+			res.status(200).json({
+				data: complaintDateCount,
+				message: 'Date count retrieved successfully',
+				statusCode: StatusCodes.Success
+			});
+		}).then()
+			.catch(err => {
+					console.log(err);
+					res.status(500).json({
+						data: '',
+						messsage: 'Cannot get count',
+						statusCode: StatusCodes.DBError
+					});
+				}
+			);
+	} catch (e) {
+		console.log(e);
+		return res.status(500).json({
+			data: null,
+			message: 'Get date server error',
 			statusCode: StatusCodes.ServerError
 		});
 	}

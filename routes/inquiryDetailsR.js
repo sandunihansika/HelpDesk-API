@@ -32,4 +32,13 @@ router.get('/getStatusCount',
   // checkUserType,
   inquiryDetails.getStatusCount)
 
+router.get('/getDateCount',
+  (req, res, next) => {
+    res.locals.newuserType = UserType.AdminUser;
+    next();
+  },
+  // checkToken,
+  // checkUserType,
+  inquiryDetails.getDateCount)
+
 module.exports = router;

@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors')
 const path = require('path');
 const router = express.Router();
+require('dotenv/config');
 //const upload = require('./config/multer.ts');
 //const PORT = process.env.PORT || 5000;
 

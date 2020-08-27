@@ -35,7 +35,8 @@ exports.validateUserCredentials = (req, res, next) => {
 exports.userLogin = (req, res, next) => {
 
   try {
-    axios.post('http://13.251.96.119:5001/globalUser/login', {
+   axios.post('http://13.250.160.123:5001/globalUser/login', {
+
       email: req.body.email,
       password: req.body.password,
       clientId: +req.header('clientId')
@@ -43,7 +44,6 @@ exports.userLogin = (req, res, next) => {
       .then(function(responseLogin) {
         console.log(responseLogin);
         if (responseLogin.data.statusCode === StatusCodes.Success) {
-
           const responseData = {
             token: responseLogin.data.data
           };
@@ -52,6 +52,12 @@ exports.userLogin = (req, res, next) => {
             message: 'User - [' + req.body.email + '] login successfully',
             statusCode: StatusCodes.Success
           });
+        }else{
+          return res.status(200).json({
+            data: null,
+            message: 'Invalid email or password',
+            statusCode: StatusCodes.ServerError
+          });
         }
       })
       .catch((error) => {
@@ -59,7 +65,7 @@ exports.userLogin = (req, res, next) => {
         log.error(error);
         return res.status(200).json({
           data: null,
-          message: 'User Login Server Error',
+          message: 'Invalid email or password',
           statusCode: StatusCodes.ServerError
         });
       });

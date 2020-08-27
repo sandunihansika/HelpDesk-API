@@ -15,8 +15,8 @@ module.exports = (req, res, next) => {
     if (!authorizedUser) {
       console.log('not authorized');
       return res.status(200).json({
-        statusCode: StatusCodes.ValidationError,
-        message: error.details[0].message,
+        statusCode: StatusCodes.Unauthorized,
+        message: 'Authorization Error',
         data: null
       });
     }
@@ -24,9 +24,8 @@ module.exports = (req, res, next) => {
     // let log;
     log.error(e);
     return res.status(200).json({
-      data: null,
-      message: 'Admin User Login Validation Error',
-      statusCode: StatusCodes.ValidationError
+      message: 'Authorization Error',
+      statusCode: StatusCodes.Unauthorized
     });
   }
 };

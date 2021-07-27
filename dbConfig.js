@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 
 module.exports = new Sequelize('helpdeskdb', 'ingenii', 'Cde#Vfr4', {
-  host: '13.250.160.123',
+  host: '54.169.55.109',
   dialect: 'mysql',
   pool: {
     max: 100,

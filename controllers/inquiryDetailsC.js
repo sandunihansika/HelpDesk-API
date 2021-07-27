@@ -13,13 +13,13 @@ exports.getDetails = (req, res, next) => {
       const task = await Inquiry.findAll(
         {
           attributes: ['id', 'customerId', 'contactPerson', 'designation', 'contactPersonNumber', 'customer.firstName', 'statusId', 'updatedAt',
-            [sequelize.fn('datediff', sequelize.fn("NOW") , sequelize.col('Inquiry.updatedAt')),'dateDiff']],
+            [sequelize.fn('datediff', sequelize.fn("NOW") , sequelize.col('updatedAt')),'dateDiff']],
           include: [{
             model: Customer,
             attributes: ['firstName', 'lastName', 'companyName', 'companyRegistrationNo', 'nicNumber', 'handlingCompany', 'telNo']
           },
             { model: Status, attributes: ['name'] }]
-        }, { transaction: t });
+        });
       res.status(200).json({
         data: task,
         message: 'Inquiry details retrieved successfully',
@@ -53,7 +53,7 @@ exports.getHistory = (req, res, next) => {
         {
           where: { inquiryId: req.params.inquiryId },
           include: { model: Status, attributes: ['name'] }
-        }, { transaction: t });
+        });
       res.status(200).json({
         data: inquiryHistory,
         message: 'History retrieved successfully',
@@ -84,9 +84,9 @@ exports.getStatusCount = (req, res, next) => {
   try {
     db.transaction(async t => {
       const statusCount = await Inquiry.findAll({
-        attributes: ['statusId', [sequelize.fn('count', 'Inquiry.statusId'), 'count']],
-        group : ['Inquiry.statusId']
-      }, { transaction: t }).then();
+        attributes: ['statusId', [sequelize.fn('count', 'statusId'), 'count']],
+        group : ['statusId']
+      })
       res.status(200).json({
         data: statusCount,
         message: 'Status count retrieved successfully',
@@ -118,9 +118,9 @@ exports.getDateCount = (req, res, next) => {
     //console.log("hello");
     db.transaction(async t => {
       const dateCount = await Inquiry.findAll({
-        attributes: [ [sequelize.fn('MONTH', sequelize.col('Inquiry.createdAt')), 'month'],[sequelize.fn('count', 'Inquiry.createdAt'), 'count']],
-        group : [[sequelize.fn('MONTH', sequelize.col('Inquiry.createdAt')), 'data']],
-      }, { transaction: t }).then();
+        attributes: [ [sequelize.fn('MONTH', sequelize.col('createdAt')), 'month'],[sequelize.fn('count', 'createdAt'), 'count']],
+        group : [[sequelize.fn('MONTH', sequelize.col('createdAt')), 'data']],
+      })
       console.log(dateCount);
       res.status(200).json({
         data: dateCount,

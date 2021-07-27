@@ -169,9 +169,9 @@ exports.getComplaintStatusCount = (req, res, next) => {
 	try {
 		db.transaction(async t => {
 			const complaintStatusCount = await Complain.findAll({
-				attributes: ['statusId', [sequelize.fn('count', 'Complain.statusId'), 'count']],
-				group : ['Complain.statusId']
-			}, { transaction: t }).then();
+				attributes: ['statusId', [sequelize.fn('count', 'statusId'), 'count']],
+				group : ['statusId']
+			})
 			res.status(200).json({
 				data: complaintStatusCount,
 				message: 'Status count retrieved successfully',
@@ -203,7 +203,7 @@ exports.getComplaintDateCount = (req, res, next) => {
 			const complaintDateCount = await Complain.findAll({
 				attributes: [ [sequelize.fn('MONTH', sequelize.col('Complain.createdAt')), 'month'],[sequelize.fn('count', 'Complain.createdAt'), 'count']],
 				group : [[sequelize.fn('MONTH', sequelize.col('Complain.createdAt')), 'data']],
-			}, { transaction: t }).then();
+			})
 			res.status(200).json({
 				data: complaintDateCount,
 				message: 'Date count retrieved successfully',

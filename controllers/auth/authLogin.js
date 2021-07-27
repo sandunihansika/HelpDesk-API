@@ -35,7 +35,7 @@ exports.validateUserCredentials = (req, res, next) => {
 exports.userLogin = (req, res, next) => {
 
   try {
-   axios.post('http://13.250.160.123:5001/globalUser/login', {
+   axios.post('http://54.169.55.109:5001/globalUser/login', {
 
       email: req.body.email,
       password: req.body.password,
